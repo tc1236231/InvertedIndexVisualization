@@ -3,34 +3,37 @@ import './App.css';
 import axios from 'axios';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
-import QuestionsTable from './components/QuestionsTable'
-import Selector from './components/Selector'
+import ResultsTable from './components/ResultsTable'
+import Search from './components/Search'
 
 class App extends Component {
   constructor(props) {
     super(props)
 
     this.state = { 
-      questions: ['hello'],
-      query: 1
+      results: [],
+      query: ''
     }
-
-    this.getTopQuestions(this.state.query)
-    
   }
 
-  getTopQuestions(query) {
-    axios.get(`stackoverflow/${query}`)
+  getTopIndexes(query) {
+    axios.get(`invertedindex/${query}`)
       .then(res => {
-        console.log(res.data)
-        this.setState({ questions: res.data })
+        this.setState({ results: res.data })
       })
   }
 
-  handleQuery = (queryValue) => {
-      console.log(queryValue)
-      this.setState({query: queryValue});
-      this.getTopQuestions(queryValue)
+  onSearchChange = (event) =>
+  {
+      let queryValue = event.target.value
+      queryValue = queryValue.toLowerCase()
+      this.setState({query: queryValue})
+  }
+
+  handleQuery = () => {
+      if(this.state.query.length > 0) {
+        this.getTopIndexes(this.state.query)
+      }
   }
 
   render() {
@@ -38,12 +41,12 @@ class App extends Component {
       <MuiThemeProvider>
         <div>
           <AppBar
-            title="React-BigQuery"
+            title="Wikipedia Inverted Indexes"
             iconClassNameRight="muidocs-icon-navigation-expand-more"
             showMenuIconButton = {false}
           />
-          <Selector onQueryChange={this.handleQuery} query={this.state.query}/>
-          <QuestionsTable questions={this.state.questions}/>
+          <Search search={this.handleQuery} onChange={this.onSearchChange}/>
+          <ResultsTable results={this.state.results}/>
         </div>
       </MuiThemeProvider>
     );
