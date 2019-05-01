@@ -4,15 +4,10 @@
 
 This app is based on the Google BigQuery app tutorial [Create A Simple Application With the API](https://cloud.google.com/bigquery/create-simple-app-api#bigquery-simple-app-download-nodejs) and using [Google Cloud Public Dataset - Stack Overflow](https://cloud.google.com/bigquery/public-data/stackoverflow)
 
-## Demo
+Appended:
 
-![React-Bigquery-Demo](https://raw.githubusercontent.com/tonyxu-io/storage/master/react-bigquery-app.png)
+This repo contains codes for inverted index data visualization for wikipedia. I use React and Express JS to achieve this. Credit to https://github.com/tonyxu-io/react-bigquery-app
 
-Supported queries:
-
-- Most Viewed StackOverflow Questions
-- Most Recent StackOverflow Questions
-- Most Answered StackOverflow Questions
 
 ## Install
 
