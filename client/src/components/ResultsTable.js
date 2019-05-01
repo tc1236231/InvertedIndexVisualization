@@ -13,7 +13,7 @@ class ResultsTable extends React.PureComponent {
   render() {
     var items = <TableRow key={0}/>
     if (this.props.results) {
-      let indexes = [];
+      let indexes = new Map();
       let duplicate_indexes = [];
       let results_length = 0;
   
@@ -22,7 +22,7 @@ class ResultsTable extends React.PureComponent {
         actual_results.forEach(element => {
           let index_result = element.IndexResult;
           let temp_indexes = index_result.slice(1).slice(0,index_result.length - 2).split(',');
-          let processed_index = [];
+          let processed_index = new Map();
           temp_indexes.forEach(match_index => {
               let temp_str_arr = match_index.trim().split('=', 2);
               if(temp_str_arr.length != 2)
@@ -31,32 +31,36 @@ class ResultsTable extends React.PureComponent {
               let word_count = Number(temp_str_arr[1])
               if(page_name.charAt(0) == "_")
                 page_name = page_name.slice(1)
-              if(processed_index.find(x => x == page_name))
+              if(processed_index.has(page_name))
                 return;
-              processed_index.push(page_name)
               let url = "https://en.wikipedia.org/wiki/" + page_name;
-              let existing_index = indexes.find(x => x.Title == page_name)
+              let existing_index = indexes.get(page_name)
               if(existing_index)
               {
-                existing_index.Count += word_count
+                existing_index.Count = word_count + existing_index.Count
                 existing_index.CountStr += " " + element.KeyWord + ":" + String(word_count)
                 duplicate_indexes.push(page_name)
               }
               else
               {
-                indexes.push({Title : page_name, Count: word_count, CountStr: element.KeyWord + ":" + String(word_count),  Url: url})
+                let ele = {Title : page_name, Count: word_count, CountStr: element.KeyWord + ":" + String(word_count),  Url: url}
+                indexes.set(page_name,ele)
+                processed_index.set(page_name, ele)
               }
           });
         })
       });
   
+      indexes = Array.from(indexes.values())
       if(results_length > 1)
       {
-        indexes = indexes.filter(x => duplicate_indexes.indexOf(x.Title) >= 0)
+        indexes = indexes.filter(x => duplicate_indexes.includes(x.Title));
       }
-  
-      indexes = indexes.sort((a,b) => b.Count - a.Count);
-      indexes = indexes.slice(0, 10)
+      
+      indexes = indexes.sort(function(a, b) {
+        return b.Count - a.Count;
+      });
+      indexes = indexes.slice(0, 20)
   
       items = indexes.map((item) => {
         return (

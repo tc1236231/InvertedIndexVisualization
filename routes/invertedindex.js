@@ -10,7 +10,6 @@ router.get('/:word(*)', function(req, res, next) {
 });
 
 async function queryIndex(projectId,word) {
-
   // Creates a client
   const bigquery = new BigQuery({
     projectId: projectId,
