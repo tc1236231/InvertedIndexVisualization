@@ -12,14 +12,17 @@ class App extends Component {
 
     this.state = { 
       results: [],
-      query: ''
+      query: '',
+      timing: 0,
     }
   }
 
   getTopIndexes(query) {
+    var t0 = performance.now()
     axios.get(`invertedindex/${query}`)
       .then(res => {
-        this.setState({ results: res.data })
+        let timing = performance.now() - t0
+        this.setState({ results: res.data , timing: timing})
       })
   }
 
@@ -46,7 +49,7 @@ class App extends Component {
             showMenuIconButton = {false}
           />
           <Search search={this.handleQuery} onChange={this.onSearchChange}/>
-          <ResultsTable results={this.state.results}/>
+          <ResultsTable results={this.state.results} timing={this.state.timing}/>
         </div>
       </MuiThemeProvider>
     );

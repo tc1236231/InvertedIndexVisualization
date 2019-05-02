@@ -11,8 +11,12 @@ import FlatButton from 'material-ui/FlatButton';
 
 class ResultsTable extends React.PureComponent {
   render() {
+    var t0 = performance.now();
+
     var items = <TableRow key={0}/>
+    let total_results = -1;
     if (this.props.results) {
+      total_results = 0;
       let indexes = new Map();
       let duplicate_indexes = [];
       let results_length = 0;
@@ -50,8 +54,9 @@ class ResultsTable extends React.PureComponent {
           });
         })
       });
-  
+
       indexes = Array.from(indexes.values())
+      total_results = indexes.length
       if(results_length > 1)
       {
         indexes = indexes.filter(x => duplicate_indexes.includes(x.Title));
@@ -67,7 +72,7 @@ class ResultsTable extends React.PureComponent {
           <TableRow key={item.Title}>
             <TableRowColumn>
               <FlatButton 
-                label={item.Title} 
+                label={item.Title.replace(/_/g,' ')} 
                 labelStyle={{textTransform: 'inherit'}}
                 href={item.Url}
                 target = "_blank"
@@ -79,24 +84,57 @@ class ResultsTable extends React.PureComponent {
       })
     }
 
-    return (
-      <Table>
-      <TableHeader
-      displaySelectAll = {false}
-      adjustForCheckbox = {false}
-      >
-        <TableRow>
-          <TableHeaderColumn>Page Name</TableHeaderColumn>
-          <TableHeaderColumn>Word Count</TableHeaderColumn>
-        </TableRow>
-      </TableHeader>
-      <TableBody
-      displayRowCheckbox = {false}
-      >
-        {items}
-      </TableBody>
-    </Table>
-    )
+    var t1 = performance.now();
+
+    if(total_results > 0 )
+    {
+      return (
+        <React.Fragment>
+          <div style={{margin: '1em auto', width: '33em'}}>
+            Total Articles { total_results }, Query Time {t1-t0+this.props.timing}ms
+          </div>
+          <Table>
+            <TableHeader
+            displaySelectAll = {false}
+            adjustForCheckbox = {false}
+            >
+              <TableRow>
+                <TableHeaderColumn>Page Name</TableHeaderColumn>
+                <TableHeaderColumn>Word Count</TableHeaderColumn>
+              </TableRow>
+            </TableHeader>
+            <TableBody
+            displayRowCheckbox = {false}
+            >
+              {items}
+            </TableBody>
+          </Table>
+        </React.Fragment>
+      )
+    }
+    else
+    {
+      return (
+        <React.Fragment>
+          <Table>
+            <TableHeader
+            displaySelectAll = {false}
+            adjustForCheckbox = {false}
+            >
+              <TableRow>
+                <TableHeaderColumn>Page Name</TableHeaderColumn>
+                <TableHeaderColumn>Word Count</TableHeaderColumn>
+              </TableRow>
+            </TableHeader>
+            <TableBody
+            displayRowCheckbox = {false}
+            >
+              {items}
+            </TableBody>
+          </Table>
+        </React.Fragment>
+      )
+    }
   }
 }
 
